@@ -1,25 +1,48 @@
 package git;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
 public class Commit {
-    private String message;
-    //private String hash;
-    private Set<String> addedFiles;
-    private Set<String> removedFiles;
+    public static final String TIME_FORMAT = "EEE MMM dd HH:mm yyyy";
 
-    public Commit(String message, Set<String> addedFiles, Set<String> removedFiles) {
+    private final String message;
+    private final String hash;
+    private final LocalDateTime time;
+    private final Stage stage;
+
+    private String hexDigest(String input) {
+        return new SHA1Digest().hexDigest(input);
+    }
+
+    public Commit(String message, Stage stage) {
         this.message = message;
-        this.addedFiles = addedFiles;
-        this.removedFiles = removedFiles;
+        this.stage = stage;
+        this.time = LocalDateTime.now();
+        this.hash = hexDigest(getDate() + message);
     }
 
     public Set<String> getAddedFiles() {
-        return addedFiles;
+        return stage.getAddedFiles();
     }
 
     public Set<String> getRemovedFiles() {
-        return removedFiles;
+        return stage.getRemovedFiles();
+    }
+
+    public String getHash() {
+        return hash;
+    }
+
+    public String getDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(TIME_FORMAT);
+        return time.format(formatter);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("commit %s\nDate: %s\n\n\t%s\n", hash, getDate(), message);
     }
 }

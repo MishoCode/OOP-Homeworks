@@ -1,8 +1,8 @@
 package git;
 
 public class Result {
-    private boolean successful;
-    private String message;
+    private final boolean successful;
+    private final String message;
 
     public Result(boolean successful, String message) {
         this.successful = successful;
